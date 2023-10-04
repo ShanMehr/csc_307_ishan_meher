@@ -15,10 +15,14 @@ function MyApp() {
 	    });
 	  setCharacters(updated);
 	}
-    // src/MyApp.js (a new function inside the MyApp function)
-  function updateList(person) {
-    setCharacters([...characters, person]);
+  // src/MyApp.js (a new function inside the MyApp function)
+  function updateList(person) { 
+    makePostCall(person).then( result => {
+    if (result && result.status === 200)
+        setCharacters([...characters, person] );
+    }); 
   }
+
 
   async function fetchAll(){
     try {
@@ -29,6 +33,17 @@ function MyApp() {
         //We're not handling errors. Just logging into the console.
         console.log(error); 
         return false;         
+    }
+  }
+
+  async function makePostCall(person){
+    try {
+        const response = await axios.post('http://localhost:8000/users', person);
+        return response;
+    }
+    catch (error) {
+        console.log(error);
+        return false;
     }
   }
 

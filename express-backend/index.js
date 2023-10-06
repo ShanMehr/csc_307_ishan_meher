@@ -41,10 +41,6 @@ app.get('/', (req, res) => {
     res.send('Hello World!');
 });
 
-app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`);
-});
-
 app.get('/users', (req, res) => {
     const name = req.query.name;
     const job = req.query.job;
@@ -92,7 +88,7 @@ function findUserById(id) {
 app.post('/users', (req, res) => {
     const userToAdd = req.body;
     addUser(userToAdd);
-    res.status(200).end();
+    res.status(201).end();
 });
 
 function addUser(user){
@@ -108,3 +104,7 @@ app.delete('/users/:id', (req, res) => {
 function removeUserById(id) {
    users['users_list'] =  users['users_list'].filter( (user) => user['id'] != id); 
 }
+
+app.listen(port, () => {
+    console.log(`Example app listening at http://localhost:${port}`);
+});

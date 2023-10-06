@@ -3,6 +3,9 @@ import cors from 'cors';
 const app = express();
 const port = 8000;
 
+// hashmap of ids
+let id_map = new Map();
+
 const users = { 
    users_list :
    [
@@ -92,7 +95,28 @@ app.post('/users', (req, res) => {
 });
 
 function addUser(user){
+    // don't expect to occur often
+    let user_id = generate_random_id()
+
+    // retry random number generation
+    let iteration_count = 0
+    let list_length = users["users_list"].length;
+    let max_iterations = list_length*100;
+    while(duplicate_id(user_id) && iteration_count <= max_iterations){
+        user_id = generate_random_id;
+        iteration_count++;
+    }
+    
+    // if retries failed set id to something larger than the size of the list
+    if (iteration_count == max_iterations) {
+        user_id = String(list_length*10);
+    }
+    user["id"] = user_id;
+    console.log(user_id);
+
+    // Code to add users
     users['users_list'].push(user);
+    console.log(users);
 }
 
 app.delete('/users/:id', (req, res) => {
@@ -108,3 +132,28 @@ function removeUserById(id) {
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
 });
+
+// validate that a duplicate id is not stored in the database
+function duplicate_id(new_id){
+    for (let i = 0; i < users['users_list'].length; i++){
+        if (users['users_list'][i]['id'] === new_id){
+            return true;
+        }
+    }
+    return false;
+}
+
+// Generates a random id with numbers and letters
+function generate_random_id() {
+    let list_length = users['users_list'].length;
+    // generate a random number between 1 and (list_length+1)*2
+    let new_id = Math.floor(
+        (Math.random() * (list_length+2) +1).toString()
+    );
+    // add (half the number of users) number of random letters to the id
+    let number_letters = Math.floor(list_length/2);
+    for (let i = 0; i < number_letters; i++){
+        new_id += String.fromCharCode(Math.floor(Math.random() * 26) + 97);
+    }
+    return new_id;
+}

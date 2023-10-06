@@ -126,12 +126,25 @@ function addUser(user){
 
 app.delete('/users/:id', (req, res) => {
     let id = req.params['id']; //or req.params.id
-    removeUserById(id);
-    res.send(users);
+    let successfully_deleted = removeUserById(id);
+    if(!successfully_deleted) {
+        res.status(404).end()
+    } else {
+        res.status(204).send(users);
+    }
+    
 });
 
 function removeUserById(id) {
-   users['users_list'] =  users['users_list'].filter( (user) => user['id'] != id); 
+    const past_users = users['users_list'].length
+    // validate that the index is less than the size of the arrary of users
+    let index = parseInt(id)
+    if (index >=past_users) {
+        return false;
+    }
+    users["users_list"].splice(parseInt(id),1);
+    // validate that really users were removed
+    return !(past_users === users['users_list'].length)
 }
 
 app.listen(port, () => {
@@ -148,7 +161,7 @@ function duplicate_id(new_id){
     return false;
 }
 
-// Generates a random id with numbers and letters
+// Generates a random id w ith numbers and letters
 function generate_random_id() {
     let list_length = users['users_list'].length;
     // generate a random number between 1 and (list_length+1)*2

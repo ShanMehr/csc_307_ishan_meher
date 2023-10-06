@@ -10,11 +10,27 @@ function MyApp() {
 	const [characters, setCharacters] = useState([]);  
 
 	function removeOneCharacter (index) {
-	    const updated = characters.filter((character, i) => {
-	        return i !== index
-	    });
-	  setCharacters(updated);
+      makeDeleteCallCharacter(index).then(result => {
+        if (result && result.status === 204) {
+          const updated = characters.filter((character, i) => {
+            return i !== index
+          });
+          setCharacters(updated);
+        }
+      });
 	}
+
+  async function makeDeleteCallCharacter(index) {
+    try {
+        const response = await axios.delete(`http://localhost:8000/users/${index}`);
+        return response;
+    }
+    catch (error) {
+        console.log(error);
+        return false;
+    }
+  }
+
   // src/MyApp.js (a new function inside the MyApp function)
   function updateList(person) { 
     makePostCall(person).then( result => {

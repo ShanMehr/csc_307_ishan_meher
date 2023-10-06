@@ -90,8 +90,14 @@ function findUserById(id) {
 
 app.post('/users', (req, res) => {
     const userToAdd = req.body;
-    addUser(userToAdd);
-    res.status(201).end();
+    let user = addUser(userToAdd);
+    if (!user) {
+        // conflict in post
+        res.status(409).send('Unable to Record User');
+    } 
+    else {
+        res.status(201).send({newUser: user});
+    } 
 });
 
 function addUser(user){
@@ -112,11 +118,10 @@ function addUser(user){
         user_id = String(list_length*10);
     }
     user["id"] = user_id;
-    console.log(user_id);
 
     // Code to add users
     users['users_list'].push(user);
-    console.log(users);
+    return user;
 }
 
 app.delete('/users/:id', (req, res) => {

@@ -107,15 +107,16 @@ function addUser(user){
     // retry random number generation
     let iteration_count = 0
     let list_length = users["users_list"].length;
-    let max_iterations = list_length*100;
+    // Retries tested by setting retry to a low number
+    let max_iterations = list_length*2;
     while(duplicate_id(user_id) && iteration_count <= max_iterations){
-        user_id = generate_random_id;
+        user_id = generate_random_id();
         iteration_count++;
     }
     
-    // if retries failed set id to something larger than the size of the list
-    if (iteration_count == max_iterations) {
-        user_id = String(list_length*10);
+    // if retries failed set id to current time
+    if (iteration_count >= max_iterations) {
+        user_id = String(Date.now()*list_length);
     }
     user["id"] = user_id;
 

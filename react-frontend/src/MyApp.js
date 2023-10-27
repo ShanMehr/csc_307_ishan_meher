@@ -10,11 +10,14 @@ function MyApp() {
 	const [characters, setCharacters] = useState([]);  
 
 	function removeOneCharacter (index) {
-      makeDeleteCallCharacter(index).then(result => {
-        if (result && result.status === 204) {
+      let id = characters[index]['_id'];
+      makeDeleteCallCharacter(id).then(result => {
+        console.log(result);
+        if (result.status == 204) {
           const updated = characters.filter((character, i) => {
             return i !== index
           });
+          console.log(updated)
           setCharacters(updated);
         }
       });
@@ -34,11 +37,11 @@ function MyApp() {
   // src/MyApp.js (a new function inside the MyApp function)
   function updateList(person) { 
     makePostCall(person).then( result => {
-    if (result && result.status === 201 && result.data.newUser) {
-      let new_person = result.data.newUser;
+    if (result && result.status === 201 && result.data) {
+      let new_person = result.data;
       setCharacters([...characters, new_person] );
     }
-      
+    console.log(result.data)
     }); 
   }
 
